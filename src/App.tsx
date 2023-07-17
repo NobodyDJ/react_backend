@@ -1,35 +1,104 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import { useWindowSize } from "./useWindowSize";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function App({ type }: { type: string }) {
+	console.log("update app...");
+	const h1 = <h1>react后台管理</h1>;
+	const list = ["tom", "Jack", "Lucy", "Lily"];
+	const style = { color: "pink", fontSize: "16px" };
+	const value = "123";
+	let condition = 2;
+	const [user, setUser] = useState({
+		name: "terrence",
+		gender: "male",
+	});
+	const [title, setTitle] = useState("标题1");
+	const changeTitle = () => {
+		setTitle("标题2");
+	};
+	const changeUserName = () => {
+		// 如果是一个数组元素，则修改方式同理
+		setUser({ ...user, name: "Bob" });
+	};
+	const changeUser = () => {
+		setUser({ name: "Lily", gender: "female" });
+	};
+	// 初始值可以写成函数的形式来表达
+	const [count, setCount] = useState(() => {
+		if (condition > 0) {
+			return 100;
+		} else {
+			return 0;
+		}
+	});
+	const changeCount = () => {
+		// 多次操作回合并为一次，因为多次操作之后没有赋值吧
+		setCount(count + 1);
+		condition++;
+	};
+	// useEffect的用法
+	const [num, setNum] = useState(0);
+	const [total, setTotal] = useState(0);
+	useEffect(() => {
+		document.title = "React后台课程";
+	});
+	useEffect(() => {
+		setNum(num + 1);
+	}, []);
+	useEffect(() => {
+		setTotal(num * 5);
+	}, [num]);
+	useEffect(() => {
+		// 难点在于闭包，如果使用箭头函数，每次count会默认取最外层的count
+		//
+		const T = setInterval(() => {
+			setNum((num) => {
+				console.log(num);
+				return num + 1;
+			});
+		}, 1000);
+		// 注意卸载操作
+		return () => {
+			clearInterval(T);
+		};
+	}, []);
+	const [size] = useWindowSize();
+	return (
+		<div className="APP">
+			{h1}
+			<div>
+				{list.map((item) => (
+					<span key={item} style={style}>
+						{item}
+					</span>
+				))}
+			</div>
+			<div>{title}</div>
+			<div>
+				<div>用户名称：{user.name}</div>
+				<div>用户性别：{user.gender}</div>
+			</div>
+			<input type={type} value={value}></input>
+			<br />
+			<div style={{ marginTop: "10px" }}>
+				<button onClick={changeTitle}>修改标题</button>
+				<button onClick={changeUserName}>修改用户名称</button>
+				<button onClick={changeUser}>修改用户</button>
+			</div>
+			<div>{count}</div>
+			<button onClick={changeCount}>修改count</button>
+			<div>useEffect的用法</div>
+			<p>
+				Num:{num}, Total:{total}
+			</p>
+			<p>
+				window width:{size.width}, window height: {size.height}
+			</p>
+		</div>
+	);
 }
 
-export default App
+export default App;
