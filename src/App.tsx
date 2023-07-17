@@ -52,19 +52,14 @@ function App({ type }: { type: string }) {
 		setTotal(num * 5);
 	}, [num]);
 	useEffect(() => {
-		// 难点在于闭包，如果使用箭头函数，每次count会默认取最外层的count
-		//
 		const T = setInterval(() => {
-			setNum((num) => {
-				console.log(num);
-				return num + 1;
-			});
+			setNum(num + 1);
 		}, 1000);
 		// 注意卸载操作
 		return () => {
 			clearInterval(T);
 		};
-	}, []);
+	}, [num]);
 	const [size] = useWindowSize();
 	return (
 		<div className="APP">
