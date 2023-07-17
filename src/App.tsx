@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect, useMemo, useCallback } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { useWindowSize } from "./useWindowSize";
@@ -51,21 +51,38 @@ function App({ type }: { type: string }) {
 	useEffect(() => {
 		setTotal(num * 5);
 	}, [num]);
-	useEffect(() => {
-		// 难点在于闭包，如果使用箭头函数，每次count会默认取最外层的count
-		//
-		const T = setInterval(() => {
-			setNum((num) => {
-				console.log(num);
-				return num + 1;
-			});
-		}, 1000);
-		// 注意卸载操作
-		return () => {
-			clearInterval(T);
-		};
-	}, []);
+	// useEffect(() => {
+	// 	// 关键在于useEffect的依赖项
+	// 	const T = setInterval(() => {
+	// 		setNum((num) => {
+	// 			console.log(num);
+	// 			return num + 1;
+	// 		});
+	// 	}, 1000);
+	// 	// 注意卸载操作
+	// 	return () => {
+	// 		clearInterval(T);
+	// 	};
+	// }, []);
 	const [size] = useWindowSize();
+	// useMemo
+	const [a, setA] = useState(0);
+	const changeA = () => {
+		setA(a + 1);
+	}
+	const total1 = () => {
+		console.log('total1...');
+		const list = [1, 3, 5, 7, 9];
+		return list.reduce((prev, current) => prev + current, 0);
+	}
+	const total2 = useMemo(() => {
+		console.log('total2...');
+		const list = [1, 3, 5, 7, 9];
+		return list.reduce((prev, current) => prev + current, 0);
+	}, [])
+	const handleChildClick = useCallback(() => {
+		console.log('子节点点击')
+	}, [])
 	return (
 		<div className="APP">
 			{h1}
@@ -97,8 +114,25 @@ function App({ type }: { type: string }) {
 			<p>
 				window width:{size.width}, window height: {size.height}
 			</p>
+			<div>memo,useMemo,useCallback的用法</div>
+			<div>
+				<div>a的值:{a}</div>
+				<button onClick={changeA}>点击修改a的值</button>
+			</div>
+			<div>total1的值：{total1()}</div>
+			<div>total2的值：{total2}</div>
+			<Child onClick={handleChildClick}></Child>
 		</div>
 	);
 }
+
+const Child = memo(({ onClick }: any) => {
+	console.log('child...');
+	return (
+		<p>
+			我是子节点<button onClick={onClick}>子节点按钮</button>
+		</p>
+	)
+})
 
 export default App;
