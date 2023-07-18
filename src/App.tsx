@@ -1,9 +1,10 @@
-import { memo, useState, useEffect, useMemo, useCallback } from "react";
+import { memo, useState, useEffect, useMemo, useCallback, createContext, useContext, useReducer } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { useWindowSize } from "./useWindowSize";
 import "./App.css";
 
+const UserContext = createContext({});
 function App({ type }: { type: string }) {
 	console.log("update app...");
 	const h1 = <h1>react后台管理</h1>;
@@ -83,6 +84,16 @@ function App({ type }: { type: string }) {
 	const handleChildClick = useCallback(() => {
 		console.log('子节点点击')
 	}, [])
+	// useContext与useReducer来模拟类似vuex一样的全局状态管理器
+	const reducer = (state: string, action: { type: string; name: string }) => {
+		switch (action.type) {
+			case 'update_name':
+				return action.name
+			default:
+				return state
+		}
+	}
+	const [name, dispatch] = useReducer(reducer, "Tom");
 	return (
 		<div className="APP">
 			{h1}
@@ -122,6 +133,11 @@ function App({ type }: { type: string }) {
 			<div>total1的值：{total1()}</div>
 			<div>total2的值：{total2}</div>
 			<Child onClick={handleChildClick}></Child>
+			<div>全局状态管理器模拟</div>
+			<UserContext.Provider value={{ name, dispatch }}>
+				<Child1></Child1>
+				<Child2></Child2>
+			</UserContext.Provider>
 		</div>
 	);
 }
@@ -135,4 +151,28 @@ const Child = memo(({ onClick }: any) => {
 	)
 })
 
+const Child1 = () => {
+	const { dispatch }: any = useContext(UserContext);
+	const handleName = () => {
+		dispatch({
+			type: 'update_name',
+			name: Math.random()
+		})
+	}
+	return (
+		<p>
+			<span>Child1</span>
+			<button onClick={handleName}>点击改变名字</button>
+		</p>
+	)
+}
+
+const Child2 = () => {
+	const { name }: any = useContext(UserContext);
+	return (
+		<>
+			<span>Child2 {name}</span>
+		</>
+	)
+}
 export default App;
