@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useMemo, useCallback, createContext, useContext, useReducer } from "react";
+import { memo, useState, useEffect, useMemo, useCallback, createContext, useContext, useReducer, useRef, useTransition } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import { useWindowSize } from "./useWindowSize";
@@ -21,7 +21,7 @@ function App({ type }: { type: string }) {
 		setTitle("标题2");
 	};
 	const changeUserName = () => {
-		// 如果是一个数组元素，则修改方式同理
+		// 如果是一个数组元素，则修改方式同理，保留未修改的属性，值修改变化的属性
 		setUser({ ...user, name: "Bob" });
 	};
 	const changeUser = () => {
@@ -94,6 +94,23 @@ function App({ type }: { type: string }) {
 		}
 	}
 	const [name, dispatch] = useReducer(reducer, "Tom");
+	// ref
+	const userRef = useRef<HTMLInputElement>(null);// 选中ref元素
+	const [val, setVal] = useState('');
+	const handleInput = () => {
+		userRef.current?.focus();
+		setVal(userRef.current?.value || '');
+	}
+	const [query, setQuery] = useState('');
+	const [sequence, setSequence] = useState([]);
+	const [isPending, startTransition] = useTransition();
+	const handleInputChange = (e: any) => {
+		setQuery(e.target.value)
+		startTransition(() => {
+			const arr = Array.from({ length: 1000 }).fill(1);
+			setSequence([...sequence, ...arr]);
+		})
+	}
 	return (
 		<div className="APP">
 			{h1}
@@ -138,6 +155,23 @@ function App({ type }: { type: string }) {
 				<Child1></Child1>
 				<Child2></Child2>
 			</UserContext.Provider>
+			<div>Ref的用法</div>
+			<div>
+				<input type="text" ref={userRef} className="red"></input>
+				<button onClick={handleInput}>按钮</button>
+				<p>{val}</p>
+			</div>
+			<div>transition的用法</div>
+			<input type="text" onChange={handleInputChange} value={query}></input>
+			<div>
+				{isPending ?
+					(<div>lOADING...</div>)
+					:
+					sequence.map((item: number, index: number) => {
+						return <div key={index}>{item}</div>
+					})
+				}
+			</div>
 		</div>
 	);
 }
