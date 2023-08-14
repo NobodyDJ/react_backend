@@ -14,6 +14,7 @@ export default defineConfig({
 		},
 	},
 	resolve: {
+		// 讲src根路径以别名形式命名
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
 		},
