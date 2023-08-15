@@ -1,7 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { message } from "antd";
 import { showLoading, hideLoading } from "./loading";
-console.log(import.meta.env);
+import env from '@/config'
+console.log('config', env)
 
 // 创建一个axios的实例
 const instance = axios.create({
@@ -30,10 +31,10 @@ instance.interceptors.request.use(
 		if (token) {
 			config.headers.Authorization = "Token" + token;
 		}
-		if (import.meta.env.VITE_MOCK === "true") {
-			config.baseURL = import.meta.env.VITE_MOCK_API;
+		if (env.mock) {
+			config.baseURL = env.mockApi
 		} else {
-			config.baseURL = import.meta.env.VITE_BASE_API;
+			config.baseURL = env.baseApi
 		}
 		return {
 			...config,
