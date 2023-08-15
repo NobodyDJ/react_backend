@@ -1,10 +1,11 @@
 import axios, { AxiosError } from "axios";
 import { message } from "antd";
 import { showLoading, hideLoading } from "./loading";
+console.log(import.meta.env);
 
 // 创建一个axios的实例
 const instance = axios.create({
-	baseURL: "/api",
+	baseURL: import.meta.env.VITE_BASE_API,
 	timeout: 8000,
 	timeoutErrorMessage: "请求超时，请稍后再试",
 	// 默认是跨域
@@ -28,6 +29,11 @@ instance.interceptors.request.use(
 		const token = localStorage.getItem("token");
 		if (token) {
 			config.headers.Authorization = "Token" + token;
+		}
+		if (import.meta.env.VITE_MOCK === "true") {
+			config.baseURL = import.meta.env.VITE_MOCK_API;
+		} else {
+			config.baseURL = import.meta.env.VITE_BASE_API;
 		}
 		return {
 			...config,
