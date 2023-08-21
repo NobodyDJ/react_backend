@@ -5,7 +5,7 @@ import {
 	useRoutes,
 } from "react-router-dom";
 import Welcome from "@/views/Welcome";
-import Login from "@/views/Login";
+import Login from "@/views/Login/Login";
 import NotFound from "@/views/NotFound";
 import NoAccess from "@/views/NoAccess";
 
