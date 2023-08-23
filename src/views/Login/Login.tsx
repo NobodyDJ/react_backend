@@ -18,16 +18,16 @@ export default function Login() {
 				>
 					<Form.Item
 						name="username"
-						rules={[{ required: true, message: "Please input your username!" }]}
+						rules={[{ required: true, message: "请输入您的用户名" }]}
 					>
-						<Input />
+						<Input placeholder="请输入用户名"/>
 					</Form.Item>
 
 					<Form.Item
 						name="password"
-						rules={[{ required: true, message: "Please input your password!" }]}
+						rules={[{ required: true, message: "请输入您的密码" }]}
 					>
-						<Input.Password />
+						<Input.Password placeholder="请输入密码"/>
 					</Form.Item>
 
 					<Form.Item>
