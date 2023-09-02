@@ -2,6 +2,8 @@ import axios, { AxiosError } from "axios";
 import { message } from "antd";
 import { showLoading, hideLoading } from "./loading";
 import env from '@/config'
+import { Result } from '../types/api.ts'
+import storage from "./storage";
 console.log('config', env)
 
 // 创建一个axios的实例
@@ -27,10 +29,12 @@ export default {
 instance.interceptors.request.use(
 	(config) => {
 		showLoading();
-		const token = localStorage.getItem("token");
+		const token = storage.get("token");
 		if (token) {
 			config.headers.Authorization = "Token" + token;
 		}
+		// 必须传的参数
+		config.headers.icode = 'E1AAD81EADDF4434'
 		if (env.mock) {
 			config.baseURL = env.mockApi
 		} else {
@@ -48,12 +52,12 @@ instance.interceptors.request.use(
 // 封装一个响应拦截器
 instance.interceptors.response.use(
 	(response) => {
-		const data = response.data;
+		const data: Result = response.data;
 		hideLoading();
 		// 登陆身份验证失败需要跳转到登陆界面重新登录
 		if (data.code === 50001) {
 			message.error(data.msg);
-			localStorage.removeItem("token");
+			storage.remove("token");
 			// location.href = "/login";
 		} else if (data.code !== 0) {
 			message.error(data.msg);

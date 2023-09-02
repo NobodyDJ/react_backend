@@ -22,14 +22,16 @@ const config = {
     cdn: 'http://xxx.aliyun.com',
     mock: false,
     mockApi: 'https://www.fastmock.site/mock/5841b82d5672783b6fd62bb2a06aeb1f/api'
-  },
+	},
+	// 测试环境
   stg: {
     baseApi: '/api',
     uploadApi: 'http://api-driver-stg.marsview.cc',
     cdn: 'http://xxx.aliyun.com',
     mock: false,
     mockApi: 'https://www.fastmock.site/mock/5841b82d5672783b6fd62bb2a06aeb1f/api'
-  },
+	},
+	// 生产环境
   prd: {
     baseApi: '/api',
     uploadApi: 'http://api-driver.marsview.cc',

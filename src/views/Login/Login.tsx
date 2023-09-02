@@ -1,10 +1,17 @@
 import { useEffect } from "react";
 import request from "@/utils/request";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import "./index.less";
-export default function Login() {
-	const onFinish = () => {
-		console.log("values");
+import { Login } from '@/types/api.ts'
+import api from '../../api'
+import storage from "@/utils/storage";
+export default function LoginFC() {
+	const onFinish = async (values:Login.params) => {
+		const data = await api.login(values);
+		storage.set('token', data);
+		message.success('登陆成功');
+		const params = new URLSearchParams(location.search);
+		location.href = params.get('callback') || '/';
 	};
 	return (
 		<div className="login">
@@ -17,14 +24,14 @@ export default function Login() {
 					autoComplete="off"
 				>
 					<Form.Item
-						name="username"
+						name="userName"
 						rules={[{ required: true, message: "请输入您的用户名" }]}
 					>
 						<Input placeholder="请输入用户名"/>
 					</Form.Item>
 
 					<Form.Item
-						name="password"
+						name="userPwd"
 						rules={[{ required: true, message: "请输入您的密码" }]}
 					>
 						<Input.Password placeholder="请输入密码"/>

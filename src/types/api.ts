@@ -6,7 +6,7 @@ export interface PageParams {
 	pageNum: number | undefined;
 	pageSize?: number | undefined;
 }
-// 返回结果
+// 返回结果，接口类型定义
 export interface Result<T = any> {
 	code: number;
 	data: T;
