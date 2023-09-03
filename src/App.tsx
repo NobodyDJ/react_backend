@@ -1,6 +1,6 @@
 import { RouterProvider } from "react-router";
 import router from "./router/index";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App as AntdApp } from "antd";
 import "./App.css";
 // import { BrowserRouter, HashRouter } from "react-router-dom";
 
@@ -18,7 +18,9 @@ function App() {
 				}
 			}}
 		>
-		<RouterProvider router={router} />
+			<AntdApp>
+			  <RouterProvider router={router} />
+			</AntdApp>
 	</ConfigProvider>);
 }
 

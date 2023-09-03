@@ -8,17 +8,27 @@ import Welcome from "@/views/Welcome";
 import Login from "@/views/Login/Login";
 import NotFound from "@/views/NotFound";
 import NoAccess from "@/views/NoAccess";
+import Layout from "../layout";
 
 // 以什么模式创建一个路由信息
 const router = createBrowserRouter([
 	// 根组件路由
 	{
 		path: "/",
-		element: <Welcome></Welcome>,
+		element: <Navigate to="/welcome"></Navigate>,
 	},
 	{
 		path: "/login",
 		element: <Login></Login>,
+	},
+	{
+		element: <Layout></Layout>,
+		children: [
+			{
+				path: '/welcome',
+				element: <Welcome></Welcome>
+			}
+		]
 	},
 	{
 		path: "*",
