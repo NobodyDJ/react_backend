@@ -1,6 +1,7 @@
 import React, { HtmlHTMLAttributes, useEffect } from 'react';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Layout, Menu, theme, Watermark  } from 'antd';
+import { Layout, Menu, theme, Watermark } from 'antd';
+import NavHeader from '@/components/NavHeader';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -61,7 +62,7 @@ const App: React.FC = () => {
 					/>
 				</Sider>
 				<Layout>
-					<Header style={{ padding: 0, background: colorBgContainer }} />
+					<NavHeader />
 					<Content style={{ margin: '24px 16px 0' }}>
 						<div id="content" style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
 							<span>content</span>
