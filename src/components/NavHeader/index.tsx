@@ -30,7 +30,7 @@ const NavHeader = () => {
       <div className='right'>
         <Switch checkedChildren='暗黑' unCheckedChildren='默认' style={{ marginRight: 10 }} />
         <Dropdown menu={{ items }} trigger={['click']}>
-          <span className={styles.nickName}>Terrrence</span>
+          <span className={styles.nickName}>Terrence</span>
         </Dropdown>
       </div>
     </div>
