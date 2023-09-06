@@ -28,7 +28,7 @@ export const toLocalDate = (date?: Date, rule?: string) => {
 };
 
 // 格式化日期
-export const fomratDate = (date?: Date, rule?: string) => {
+export const formatDate = (date?: Date, rule?: string) => {
 	let curDate = new Date();
 	if (date) curDate = date;
 
