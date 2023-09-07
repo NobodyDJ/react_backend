@@ -5,7 +5,8 @@ import NavHeader from '@/components/NavHeader';
 import NavFooter from '@/components/NavFooter';
 import Menu from '@/components/Menu';
 import styles from './index.module.less';
-
+import api from '@/api'
+import storage from '@/utils/storage'
 const { Content, Sider } = Layout;
 
 const App: React.FC = () => {
@@ -36,7 +37,14 @@ const App: React.FC = () => {
 	// 	console.log('targetNode', targetNode)
 	// 	observer.observe(targetNode, config)
 	// }, [])
-
+	useEffect(() => {
+    getUserInfo()
+  }, [])
+  const getUserInfo = async () => {
+    const data = await api.getUserInfo()
+    storage.set('userInfo', data)
+    console.log('data', data.userName)
+  }
 	return (
 		<Watermark content="terrence">
 			<Layout>

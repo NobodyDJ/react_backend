@@ -18,6 +18,9 @@ const instance = axios.create({
 	timeoutErrorMessage: "请求超时，请稍后再试",
 	// 默认是跨域
 	withCredentials: true,
+	headers: {
+		icode: 'E1AAD81EADDF4434'
+	}
 });
 
 export default {
@@ -32,26 +35,24 @@ export default {
 // 封装一个请求拦截器 关键是对token的拼接
 // 拦截器本质是Promise对象
 instance.interceptors.request.use(
-	(config) => {
-		if(config.showLoading) showLoading();
-		const token = storage.get("token");
-		if (token) {
-			config.headers.Authorization = "Token" + token;
-		}
-		// 必须传的参数
-		config.headers.icode = 'E1AAD81EADDF4434'
-		if (env.mock) {
-			config.baseURL = env.mockApi
-		} else {
-			config.baseURL = env.baseApi
-		}
-		return {
-			...config,
-		};
-	},
-	(error: AxiosError) => {
-		return Promise.reject(error);
-	}
+	config => {
+    if (config.showLoading) showLoading()
+    const token = storage.get('token')
+    if (token) {
+      config.headers.Authorization = 'Bearer ' + token
+    }
+    if (env.mock) {
+      config.baseURL = env.mockApi
+    } else {
+      config.baseURL = env.baseApi
+    }
+    return {
+      ...config
+    }
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error)
+  }
 );
 
 // 封装一个响应拦截器

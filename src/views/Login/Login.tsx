@@ -16,9 +16,10 @@ export default function LoginFC() {
 			const data: any = await api.login(values);
 			storage.set('token', data);
 			message.success('登陆成功');
-			const params = new URLSearchParams(location.search);
-			// 修改路由地址
-			location.href = params.get('callback') || '/';
+			const params = new URLSearchParams(location.search)
+      setTimeout(() => {
+        location.href = params.get('callback') || '/welcome'
+      })
 		} catch (error) {
 			message.error('登陆失败');
 		}

@@ -2,7 +2,9 @@ import { MenuFoldOutlined } from '@ant-design/icons'
 import { Breadcrumb, Switch, Dropdown } from 'antd'
 import type { MenuProps } from 'antd'
 import styles from './index.module.less'
+import storage from '@/utils/storage'
 const NavHeader = () => {
+  const userInfo = storage.get('userInfo')
   const breadList = [
     {
       title: '首页'
@@ -14,7 +16,7 @@ const NavHeader = () => {
   const items: MenuProps['items'] = [
     {
       key: '1',
-      label: '邮箱：terrence@mars.com'
+      label: '邮箱：' + userInfo.userEmail
     },
     {
       key: '2',

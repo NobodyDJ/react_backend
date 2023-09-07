@@ -15,7 +15,7 @@ const router = createBrowserRouter([
 	// 根组件路由
 	{
 		path: "/",
-		element: <Navigate to="/welcome"></Navigate>,
+		element: <Navigate to="/login"></Navigate>,
 	},
 	{
 		path: "/login",
