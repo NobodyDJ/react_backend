@@ -1,14 +1,15 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { message } from "antd";
 import { showLoading, hideLoading } from "./loading";
-import env from '@/config'
-import { Result } from '../types/api.ts'
+import env from "@/config";
+import { Result } from "../types/api.ts";
 import storage from "./storage";
-console.log('config', env)
+import { useStore } from "@/store/index.ts";
+console.log("config", env);
 
-interface IConfig{
-	showLoading?: boolean,
-	showError?: boolean
+interface IConfig {
+	showLoading?: boolean;
+	showError?: boolean;
 }
 
 // 创建一个axios的实例
@@ -19,40 +20,40 @@ const instance = axios.create({
 	// 默认是跨域
 	withCredentials: true,
 	headers: {
-		icode: 'E1AAD81EADDF4434'
-	}
+		icode: "E1AAD81EADDF4434",
+	},
 });
 
 export default {
-	get<T>(url: string, params?: object, options?:IConfig): Promise<T> {
+	get<T>(url: string, params?: object, options?: IConfig): Promise<T> {
 		// 注意get请求是在请求地址后面拼接参数，形式为对象中包含params属性 详情见axios文档
 		return instance.get(url, { params, ...options });
 	},
-	post<T>(url: string, params?: object, options?:IConfig): Promise<T> {
+	post<T>(url: string, params?: object, options?: IConfig): Promise<T> {
 		return instance.post(url, params, { ...options });
 	},
 };
 // 封装一个请求拦截器 关键是对token的拼接
 // 拦截器本质是Promise对象
 instance.interceptors.request.use(
-	config => {
-    if (config.showLoading) showLoading()
-    const token = storage.get('token')
-    if (token) {
-      config.headers.Authorization = 'Bearer ' + token
-    }
-    if (env.mock) {
-      config.baseURL = env.mockApi
-    } else {
-      config.baseURL = env.baseApi
-    }
-    return {
-      ...config
-    }
-  },
-  (error: AxiosError) => {
-    return Promise.reject(error)
-  }
+	(config) => {
+		if (config.showLoading) showLoading();
+		const token = storage.get("token");
+		if (token) {
+			config.headers.Authorization = "Bearer " + token;
+		}
+		if (env.mock) {
+			config.baseURL = env.mockApi;
+		} else {
+			config.baseURL = env.baseApi;
+		}
+		return {
+			...config,
+		};
+	},
+	(error: AxiosError) => {
+		return Promise.reject(error);
+	}
 );
 
 // 封装一个响应拦截器
@@ -67,11 +68,11 @@ instance.interceptors.response.use(
 			// location.href = "/login";
 		} else if (data.code !== 0) {
 			if (response.config.showError === false) {
-        return Promise.resolve(data)
-      } else {
-        // message.error(data.msg)
-        return Promise.reject(data)
-      }
+				return Promise.resolve(data);
+			} else {
+				// message.error(data.msg)
+				return Promise.reject(data);
+			}
 		}
 		return data.data;
 	},

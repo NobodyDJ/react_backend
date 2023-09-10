@@ -1,17 +1,17 @@
-import React, { HtmlHTMLAttributes, useEffect } from 'react';
-import { Layout, theme, Watermark } from 'antd';
-import { Outlet } from 'react-router-dom'
-import NavHeader from '@/components/NavHeader';
-import NavFooter from '@/components/NavFooter';
-import Menu from '@/components/Menu';
-import styles from './index.module.less';
-import api from '@/api'
-import storage from '@/utils/storage'
+import React, { useEffect } from "react";
+import { Layout, theme, Watermark } from "antd";
+import { Outlet } from "react-router-dom";
+import NavHeader from "@/components/NavHeader";
+import NavFooter from "@/components/NavFooter";
+import Menu from "@/components/Menu";
+import styles from "./index.module.less";
+import api from "@/api";
+import { useStore } from "@/store";
 const { Content, Sider } = Layout;
 
 const App: React.FC = () => {
-  // const {
-  //   token: { colorBgContainer },
+	// const {
+	//   token: { colorBgContainer },
 	// } = theme.useToken();
 	// useEffect(() => {
 	// 	// 实现一个水印无法被删除的效果，关键是一个MutationObserver对象是一个监听DOM变化的元素
@@ -37,19 +37,18 @@ const App: React.FC = () => {
 	// 	console.log('targetNode', targetNode)
 	// 	observer.observe(targetNode, config)
 	// }, [])
+	const { collapsed, updateUserInfo } = useStore();
+	const getUserInfo = async () => {
+		const data = await api.getUserInfo();
+		updateUserInfo(data);
+	};
 	useEffect(() => {
-    getUserInfo()
-  }, [])
-  const getUserInfo = async () => {
-    const data = await api.getUserInfo()
-    storage.set('userInfo', data)
-    console.log('data', data.userName)
-  }
+		getUserInfo();
+	}, []);
 	return (
 		<Watermark content="terrence">
 			<Layout>
-				<Sider
-				>
+				<Sider collapsed={collapsed}>
 					<Menu />
 				</Sider>
 				<Layout>
@@ -57,14 +56,14 @@ const App: React.FC = () => {
 					<Content className={styles.content}>
 						<div className={styles.wrapper}>
 							{/* 路由对应的页面，相当于vue.js中的router-view */}
-              <Outlet></Outlet>
-            </div>
-            <NavFooter />
-          </Content>
+							<Outlet></Outlet>
+						</div>
+						<NavFooter />
+					</Content>
 				</Layout>
 			</Layout>
 		</Watermark>
-  );
+	);
 };
 
 export default App;

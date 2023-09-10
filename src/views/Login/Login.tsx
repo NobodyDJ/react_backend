@@ -2,28 +2,32 @@ import { useEffect, useState } from "react";
 import request from "@/utils/request";
 import { Button, Form, Input, App } from "antd";
 import "./index.less";
-import { Login } from '@/types/api.ts'
-import { Result } from '../../types/api'
-import api from '../../api'
+import { Login } from "@/types/api.ts";
+import api from "../../api";
 import storage from "@/utils/storage";
+import { store, useStore } from "@/store";
 export default function LoginFC() {
 	// 函数hook的用法必须置顶
 	const { message, notification, modal } = App.useApp();
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(false);
+	const state = useStore();
 	const onFinish = async (values: Login.params) => {
 		try {
-			setLoading(true)
-			const data: any = await api.login(values);
-			storage.set('token', data);
-			message.success('登陆成功');
-			const params = new URLSearchParams(location.search)
-      setTimeout(() => {
-        location.href = params.get('callback') || '/welcome'
-      })
+			setLoading(true);
+			const data: string = await api.login(values);
+			store.token = data;
+			storage.set("token", data);
+			state.updateToken(data);
+			message.success("登陆成功");
+			const params = new URLSearchParams(location.search);
+			// 跳转到callback的来源页面
+			setTimeout(() => {
+				location.href = params.get("callback") || "/welcome";
+			});
 		} catch (error) {
-			message.error('登陆失败');
+			message.error("登陆失败");
 		}
-		setLoading(false)
+		setLoading(false);
 	};
 	return (
 		<div className="login">
@@ -39,18 +43,18 @@ export default function LoginFC() {
 						name="userName"
 						rules={[{ required: true, message: "请输入您的用户名" }]}
 					>
-						<Input allowClear={ true } placeholder="请输入用户名"/>
+						<Input allowClear={true} placeholder="请输入用户名" />
 					</Form.Item>
 
 					<Form.Item
 						name="userPwd"
 						rules={[{ required: true, message: "请输入您的密码" }]}
 					>
-						<Input.Password allowClear={ true } placeholder="请输入密码"/>
+						<Input.Password allowClear={true} placeholder="请输入密码" />
 					</Form.Item>
 
 					<Form.Item>
-						<Button type="primary" block htmlType="submit" loading={ loading }>
+						<Button type="primary" block htmlType="submit" loading={loading}>
 							登录
 						</Button>
 					</Form.Item>
