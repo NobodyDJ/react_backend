@@ -53,13 +53,11 @@ const App: React.FC = () => {
 				</Sider>
 				<Layout>
 					<NavHeader />
-					<Content className={styles.content}>
-						<div className={styles.wrapper}>
-							{/* 路由对应的页面，相当于vue.js中的router-view */}
-							<Outlet></Outlet>
-						</div>
-						<NavFooter />
-					</Content>
+					<div className={styles.wrapper}>
+						{/* 路由对应的页面，相当于vue.js中的router-view */}
+						<Outlet></Outlet>
+					</div>
+					<NavFooter />
 				</Layout>
 			</Layout>
 		</Watermark>
