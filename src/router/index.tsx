@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Welcome from "@/views/Welcome";
 import Login from "@/views/Login/Login";
+import User from '@/views/system/user'
 import NotFound from "@/views/NotFound";
 import NoAccess from "@/views/NoAccess";
 import Layout from "../layout";
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
 				path: "/dashboard",
 				element: <Dashboard></Dashboard>,
 			},
+			{
+        path: '/userList',
+        element: <User />
+      }
 		],
 	},
 	{

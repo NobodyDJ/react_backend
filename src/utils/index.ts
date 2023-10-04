@@ -30,9 +30,10 @@ export const toLocalDate = (date?: Date, rule?: string) => {
 };
 
 // 格式化日期
-export const formatDate = (date?: Date, rule?: string) => {
-	let curDate = new Date();
-	if (date) curDate = date;
+export const formatDate = (date?: Date | string, rule?: string) => {
+	let curDate = new Date()
+  if (date instanceof Date) curDate = date
+  else if (date) curDate = new Date(date)
 
 	let fmt = rule || "yyyy-MM-dd HH:mm:ss";
 	fmt = fmt.replace(/(y+)/, curDate.getFullYear().toString());
