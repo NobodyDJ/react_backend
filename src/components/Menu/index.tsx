@@ -23,7 +23,7 @@ const SideMenu = () => {
 			children: [
 				{
 					label: "用户管理",
-					key: "3",
+					key: "/userList",
 					icon: <TeamOutlined />,
 				},
 			],
@@ -37,6 +37,10 @@ const SideMenu = () => {
 	};
 	const handleClickLogo = () => {
 		navigate("/welcome");
+	};
+	const handleMenuItemClick = (e: any) => {
+		console.log("123", e);
+		navigate(e.key);
 	};
 	return (
 		<div>
@@ -54,6 +58,7 @@ const SideMenu = () => {
 				style={{
 					width: collapsed ? "80px" : "auto",
 				}}
+				onClick={(e) => handleMenuItemClick(e)}
 			/>
 		</div>
 	);
