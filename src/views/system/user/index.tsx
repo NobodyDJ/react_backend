@@ -1,5 +1,5 @@
 import { PageParams, User } from "@/types/api";
-import { Button, Table, Form, Input, Select, Space } from "antd";
+import { Button, Table, Form, Input, Select, Space, App } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState, useRef } from "react";
 import api from "@/api";
@@ -8,6 +8,7 @@ import CreateUser from "./CreateUser";
 import { IAction } from "@/types/modal";
 export default function UserList() {
 	// 表单实例化
+	const { message,modal } = App.useApp();
 	const [form] = Form.useForm();
 	const [data, setData] = useState<User.UserItem[]>([]);
 	const [total, setTotal] = useState(0);
@@ -19,9 +20,11 @@ export default function UserList() {
 	const userRef = useRef<{
 		open: (type: IAction, data?: User.UserItem) => void;
 	}>();
+	// 批量删除的userId
+	const [userIds, setUserIds] = useState<number[]>([])
 	useEffect(() => {
 		getUserList({
-			pageNum: 1,
+			pageNum: pagination.current,
 			pageSize: pagination.pageSize,
 		});
 	}, [pagination.current, pagination.pageSize]);
@@ -30,18 +33,20 @@ export default function UserList() {
 		const data = await api.getUserList({
 			...values,
 			pageNum: params.pageNum,
-			pageSize: params.pageSize,
+			pageSize: params.pageSize || pagination.pageSize,
 		});
+		const list = data.list
+		const total = data.page.total
 		// 模拟假数据
-		const list = Array.from({ length: 50 })
-			.fill({})
-			.map((item: any) => {
-				item = { ...data.list[0] };
-				item.userId = Math.random();
-				return item;
-			});
+		// const list = Array.from({ length: 50 })
+		// 	.fill({})
+		// 	.map((item: any) => {
+		// 		item = { ...data.list[0] };
+		// 		item.userId = Math.random();
+		// 		return item;
+		// 	});
 		setData(list);
-		setTotal(list.length);
+		setTotal(total);
 		setPagination({
 			current: data.page.pageNum,
 			pageSize: data.page.pageSize,
@@ -101,11 +106,11 @@ export default function UserList() {
 			title: "操作",
 			dataIndex: "address",
 			key: "address",
-			render() {
+			render(text,record) {
 				return (
 					<Space>
-						<Button type="text">编辑</Button>
-						<Button type="text" danger>
+						<Button type="text" onClick={()=>handleEdit(record)}>编辑</Button>
+						<Button type="text" danger onClick={()=>handleDel(record.userId)}>
 							删除
 						</Button>
 					</Space>
@@ -117,7 +122,6 @@ export default function UserList() {
 	const handleSearch = () => {
 		getUserList({
 			pageNum: 1,
-			pageSize: pagination.pageSize,
 		});
 	};
 
@@ -129,13 +133,54 @@ export default function UserList() {
 	const handleCreate = () => {
 		userRef.current?.open("create");
 	};
+	const handleEdit = (record: User.UserItem) => {
+		userRef.current?.open("edit", record);
+	}
+	// 单个删除
+	const handleDel = (userId: number) => {
+		console.log('modal', modal)
+		modal.confirm({
+			title: '删除确认',
+      content: <span>确认删除该用户吗？</span>,
+      onOk: () => {
+        handleUserDelSubmit([userId])
+      }
+		})
+	}
+	// 批量删除
+	const handlePatchConfirm = () => {
+		if (userIds.length === 0) {
+      message.error('请选择要删除的用户')
+      return
+    }
+    modal.confirm({
+      title: '删除确认',
+      content: <span>确认删除该批用户吗？</span>,
+      onOk: () => {
+        handleUserDelSubmit(userIds)
+      }
+    })
+	}
+	// 公共删除调用接口
+	const handleUserDelSubmit = async (ids: number[]) => {
+		try {
+      await api.userDel({
+        userIds: ids
+      })
+      message.success('删除成功')
+      setUserIds([])
+      getUserList({
+        pageNum: 1,
+      })
+    } catch (error) {}
+	}
 	return (
 		<div className="user-list">
 			<Form
 				className="search-form"
 				form={form}
 				layout="inline"
-				initialValues={{ state: 1 }}
+				initialValues={{ state: 0 }}
 			>
 				<Form.Item name="userId" label="用户ID">
 					<Input placeholder="请输入用户ID" />
@@ -169,7 +214,7 @@ export default function UserList() {
 						<Button type="primary" onClick={handleCreate}>
 							新增
 						</Button>
-						<Button type="primary" danger>
+						<Button type="primary" danger onClick={handlePatchConfirm}>
 							批量删除
 						</Button>
 					</div>
@@ -177,7 +222,13 @@ export default function UserList() {
 				<Table
 					bordered
 					rowKey="userId"
-					rowSelection={{ type: "checkbox" }}
+					rowSelection={{
+						type: "checkbox",
+						selectedRowKeys: userIds,
+						onChange(selectedRowKeys) {
+							setUserIds(selectedRowKeys as number[])
+						},
+					}}
 					dataSource={data}
 					columns={columns}
 					pagination={{
@@ -204,7 +255,6 @@ export default function UserList() {
 				update={() => {
 					getUserList({
 						pageNum: 1,
-						pageSize: pagination.pageSize,
 					});
 				}}
 			/>

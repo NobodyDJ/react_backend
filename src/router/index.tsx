@@ -7,6 +7,7 @@ import {
 import Welcome from "@/views/Welcome";
 import Login from "@/views/Login/Login";
 import User from '@/views/system/user'
+import Dept from '@/views/system/dept'
 import NotFound from "@/views/NotFound";
 import NoAccess from "@/views/NoAccess";
 import Layout from "../layout";
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
 			{
         path: '/userList',
         element: <User />
+			},
+			{
+        path: '/deptList',
+        element: <Dept />
       }
 		],
 	},

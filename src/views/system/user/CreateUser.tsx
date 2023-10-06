@@ -24,8 +24,13 @@ const CreateUser = (props: IModalProp) => {
 
 	// 调用弹框显示方法
 	const open = (type: IAction, data?: User.UserItem) => {
+		form.resetFields()
 		setAction(type);
 		setVisible(true);
+		if (type === 'edit' && data) {
+      form.setFieldsValue(data)
+      setImg(data.userImg)
+    }
 	};
 	const handleSubmit = async () => {
 		const valid = await form.validateFields();
@@ -35,16 +40,19 @@ const CreateUser = (props: IModalProp) => {
 				userImg: img,
 			};
 			if (action === "create") {
-				const data = await api.userCreate(params);
+				await api.userCreate(params);
 				message.success("创建成功");
-				handleCancel();
-				props.update();
+			} else {
+				await api.userEdit(params);
+				message.success("修改成功");
 			}
-		} else {
+			handleCancel();
+			props.update();
 		}
 	};
 	const handleCancel = () => {
 		setVisible(false);
+		setImg('');
 	};
 	// 文件上传之前的校验
 	const beforeUpload = (file: RcFile) => {
@@ -86,6 +94,13 @@ const CreateUser = (props: IModalProp) => {
 		>
 			<Form form={form} labelCol={{ span: 4 }} labelAlign="right">
 				<Form.Item
+					label="用户ID"
+					name="userId"
+					hidden
+				>
+					<Input placeholder="请输入用户ID"/>
+				</Form.Item>
+				<Form.Item
 					label="用户名称"
 					name="userName"
 					rules={[{ required: true, message: "请输入用户名称" }]}
@@ -95,11 +110,25 @@ const CreateUser = (props: IModalProp) => {
 				<Form.Item
 					label="用户邮箱"
 					name="userEmail"
-					rules={[{ required: true, message: "请输入用户邮箱" }]}
+					rules={[
+            { required: true, message: '请输入用户邮箱' },
+            { type: 'email', message: '请输入正确的邮箱' },
+            {
+              pattern: /^\w+@mars.com$/,
+              message: '邮箱必须以@mars.com结尾'
+            }
+          ]}
 				>
 					<Input placeholder="请输入用户邮箱"></Input>
 				</Form.Item>
-				<Form.Item label="手机号" name="mobile">
+				<Form.Item
+					label="手机号"
+					name="mobile"
+					rules={[
+            { len: 11, message: '请输入11位手机号' },
+            { pattern: /1[1-9]\d{9}/, message: '请输入1开头的11位手机号' }
+          ]}
+				>
 					<Input type="number" placeholder="请输入手机号"></Input>
 				</Form.Item>
 				<Form.Item

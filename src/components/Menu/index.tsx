@@ -14,18 +14,23 @@ const SideMenu = () => {
 		{
 			label: "工作台",
 			key: "1",
-			icon: <DesktopOutlined />,
+			icon: <DesktopOutlined rev={undefined} />,
 		},
 		{
 			label: "系统管理",
 			key: "2",
-			icon: <SettingOutlined />,
+			icon: <SettingOutlined rev={undefined} />,
 			children: [
 				{
 					label: "用户管理",
 					key: "/userList",
-					icon: <TeamOutlined />,
+					icon: <TeamOutlined rev={undefined} />,
 				},
+				{
+					label: '部门管理',
+					key: '/deptList',
+					icon: <TeamOutlined rev={undefined} />
+				}
 			],
 		},
 	];
