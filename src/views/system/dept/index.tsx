@@ -2,25 +2,44 @@ import api from '@/api'
 import { Dept } from '@/types/api'
 import { Form, Input, Button, Table, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import CreateDept from './CreateDept'
+import { IAction } from '@/types/modal'
+import { ColumnsType } from 'antd/es/table'
 export default function DeptList() {
   const [form] = useForm()
   const [data, setData] = useState<Dept.DeptItem[]>([])
+
+  const deptRef = useRef<{
+    open: (type: IAction, data?: Dept.EditParams | { parentId: string }) => void
+  }>()
 
   useEffect(() => {
     getDeptList()
   }, [])
 
+  // 获取用户列表
   const getDeptList = async () => {
     const data = await api.getDeptList(form.getFieldsValue())
     setData(data)
   }
 
+  // 重置
   const handleReset = () => {
     form.resetFields()
   }
 
-  const columns = [
+  // 创建部门
+  const handleCreate = () => {
+    deptRef.current?.open('create')
+  }
+
+  // 编辑部门
+  const handleEdit = (record: Dept.DeptItem) => {
+    deptRef.current?.open('edit', record)
+  }
+
+  const columns: ColumnsType<Dept.DeptItem> = [
     {
       title: '部门名称',
       dataIndex: 'deptName',
@@ -47,11 +66,13 @@ export default function DeptList() {
       title: '操作',
       key: 'action',
       width: 200,
-      render() {
+      render(_, record) {
         return (
           <Space>
             <Button type='text'>新增</Button>
-            <Button type='text'>编辑</Button>
+            <Button type='text' onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
             <Button type='text'>删除</Button>
           </Space>
         )
@@ -77,11 +98,14 @@ export default function DeptList() {
         <div className='header-wrapper'>
           <div className='title'>部门列表</div>
           <div className='action'>
-            <Button>新增</Button>
+            <Button type='primary' onClick={handleCreate}>
+              新增
+            </Button>
           </div>
         </div>
         <Table bordered rowKey='_id' columns={columns} dataSource={data} pagination={false} />
       </div>
+      <CreateDept mRef={deptRef} update={getDeptList} />
     </div>
   )
 }
