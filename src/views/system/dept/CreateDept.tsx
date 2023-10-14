@@ -1,27 +1,54 @@
-import { useImperativeHandle, useState } from 'react'
+import { useImperativeHandle, useState, useEffect } from 'react'
 import { IAction, IModalProp1 } from '@/types/modal'
-import { Modal, Form, TreeSelect, Input, Select } from 'antd'
-import { Dept } from '@/types/api'
+import { Modal, Form, TreeSelect, Input, Select, App } from 'antd'
+import { Dept, User } from '@/types/api'
 import { useForm } from 'antd/es/form/Form'
+import api from '@/api'
 
 export default function CreateDept(props: IModalProp1) {
   const [form] = useForm()
   const [action, setAction] = useState<IAction>('create')
   const [visible, setVisible] = useState(false)
-  const [deptList, setDeptList] = useState<Dept.DeptItem[]>([])
+	const [deptList, setDeptList] = useState<Dept.DeptItem[]>([])
+	const [userList, setUserList] = useState<User.UserItem[]>([])
+	const { message } = App.useApp()
   useImperativeHandle(props.mRef, () => ({
     open
-  }))
+	}))
 
+	useEffect(() => {
+		getAllUserList();
+	},[])
   // 打开弹框函数
   const open = (type: IAction, data?: Dept.EditParams | { parentId: string }) => {
     setAction(type)
-    setVisible(true)
-    if (type === 'edit' && data) {
+		setVisible(true)
+		getDeptList()
+    if (data) {
       form.setFieldsValue(data)
     }
+	}
+	const getDeptList = async () => {
+    const data = await api.getDeptList()
+    setDeptList(data)
+	}
+	const getAllUserList = async () => {
+    const data = await api.getAllUserList()
+    setUserList(data)
   }
-  const handleSubmit = () => {}
+	const handleSubmit = async () => {
+		const valid = await form.validateFields()
+    if (valid) {
+      if (action === 'create') {
+        await api.createDept(form.getFieldsValue())
+      } else {
+        await api.editDept(form.getFieldsValue())
+      }
+      message.success('操作成功')
+      handleCancel()
+      props.update()
+    }
+	}
   const handleCancel = () => {
     setVisible(false)
     form.resetFields()
@@ -36,7 +63,10 @@ export default function CreateDept(props: IModalProp1) {
       onOk={handleSubmit}
       onCancel={handleCancel}
     >
-      <Form form={form} labelAlign='right' labelCol={{ span: 4 }}>
+			<Form form={form} labelAlign='right' labelCol={{ span: 4 }}>
+			  <Form.Item hidden name='_id'>
+          <Input />
+        </Form.Item>
         <Form.Item label='上级部门' name='parentId'>
           <TreeSelect
             placeholder='请选择上级部门'
@@ -50,10 +80,14 @@ export default function CreateDept(props: IModalProp1) {
           <Input placeholder='请输入部门名称' />
         </Form.Item>
         <Form.Item label='负责人' name='userName'>
-          <Select>
-            <Select.Option value='Jack' key={'Jack'}>
-              Jack
-            </Select.Option>
+				  <Select>
+            {userList.map(item => {
+              return (
+                <Select.Option value={item.userName} key={item.userId}>
+                  {item.userName}
+                </Select.Option>
+              )
+            })}
           </Select>
         </Form.Item>
       </Form>

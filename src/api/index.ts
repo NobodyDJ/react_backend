@@ -97,7 +97,7 @@ export default {
 
 	/* 部门管理 */
 	// 获取部门列表
-	getDeptList(params: Dept.Params) {
+	getDeptList(params?: Dept.Params) {
 		return request.get<Dept.DeptItem[]>("/dept/list", params);
 	},
 	// 创建部门
