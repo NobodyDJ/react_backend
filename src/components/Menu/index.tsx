@@ -13,7 +13,7 @@ const SideMenu = () => {
 	const items = [
 		{
 			label: "工作台",
-			key: "1",
+			key: "/welcome",
 			icon: <DesktopOutlined rev={undefined} />,
 		},
 		{
@@ -29,6 +29,11 @@ const SideMenu = () => {
 				{
 					label: '部门管理',
 					key: '/deptList',
+					icon: <TeamOutlined rev={undefined} />
+				},
+				{
+					label: '菜单管理',
+					key: '/menuList',
 					icon: <TeamOutlined rev={undefined} />
 				}
 			],
@@ -56,7 +61,7 @@ const SideMenu = () => {
 				</div>
 			</div>
 			<Menu
-				defaultSelectedKeys={["1"]}
+				defaultSelectedKeys={["/welcome"]}
 				mode="inline"
 				theme="dark"
 				items={items}

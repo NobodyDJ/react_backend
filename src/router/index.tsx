@@ -12,6 +12,7 @@ import NotFound from "@/views/NotFound";
 import NoAccess from "@/views/NoAccess";
 import Layout from "../layout";
 import Dashboard from "@/views/dashboard";
+import Menu from "@/views/system/menu"
 
 // 以什么模式创建一个路由信息
 const router = createBrowserRouter([
@@ -42,7 +43,11 @@ const router = createBrowserRouter([
 			{
         path: '/deptList',
         element: <Dept />
-      }
+			},
+			{
+				path: '/menuList',
+				element: <Menu/>
+			}
 		],
 	},
 	{

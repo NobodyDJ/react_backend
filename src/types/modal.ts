@@ -2,15 +2,11 @@
 // 其次要约束调用组件的参数
 // 这块很重要，对传入的接口操作类型进行限制
 import { MutableRefObject } from "react";
-import { User,Dept } from "./api";
+import { User } from "./api";
 export type IAction = "create" | "edit" | "delete";
 
-export interface IModalProp {
-	mRef: MutableRefObject<{open: (type: IAction, data?: User.UserItem) => void;} | undefined>;
-	update: Function;
+export interface IModalProp<T = User.UserItem> {
+  mRef: MutableRefObject<{ open: (type: IAction, data: T) => void } | undefined>
+  update: () => void
 }
 
-export interface IModalProp1 {
-	mRef: MutableRefObject<{open: (type: IAction, data?: Dept.EditParams | { parentId: string }) => void;} | undefined>;
-	update: Function;
-}

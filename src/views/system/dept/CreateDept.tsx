@@ -1,11 +1,11 @@
 import { useImperativeHandle, useState, useEffect } from 'react'
-import { IAction, IModalProp1 } from '@/types/modal'
+import { IAction, IModalProp } from '@/types/modal'
 import { Modal, Form, TreeSelect, Input, Select, App } from 'antd'
 import { Dept, User } from '@/types/api'
 import { useForm } from 'antd/es/form/Form'
 import api from '@/api'
 
-export default function CreateDept(props: IModalProp1) {
+export default function CreateDept(props: IModalProp<Dept.DeptItem>) {
   const [form] = useForm()
   const [action, setAction] = useState<IAction>('create')
   const [visible, setVisible] = useState(false)
