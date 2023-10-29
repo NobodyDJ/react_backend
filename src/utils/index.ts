@@ -2,6 +2,8 @@
  * 工具封装函数
  */
 
+import { MenuType } from "@/types/api";
+
 // 格式化金额
 export const formatMoney = (num?: number | string) => {
 	if(!num) return 0.00
@@ -63,4 +65,11 @@ export const formatState = (state?: number) => {
   if (state === 1) return '在职'
   if (state === 2) return '试用期'
   if (state === 3) return '离职'
+}
+
+// 筛选出当前所有的页面路径
+export const getMenuPath = (list: MenuType.MenuItem[]):string[] => {
+	return list.reduce((result: string[], item:MenuType.MenuItem) => {
+		return result.concat(Array.isArray(item.children) && !item.buttons ? getMenuPath(item.children) : item.path + '')
+	},[])
 }

@@ -1,44 +1,65 @@
 import { Menu } from "antd";
+import React, { useEffect, useState } from "react";
+import styles from "./index.module.less";
 import {
 	DesktopOutlined,
-	SettingOutlined,
-	TeamOutlined,
 } from "@ant-design/icons";
-import styles from "./index.module.less";
-import { useNavigate } from "react-router-dom";
+import { useLocation,useNavigate, useRouteLoaderData } from "react-router-dom";
 import { useStore } from "@/store";
+import { MenuType as IMenu } from '@/types/api'
+import type { MenuProps, MenuTheme } from 'antd/es/menu'
+import * as Icons from '@ant-design/icons'
 const SideMenu = () => {
 	const navigate = useNavigate();
 	const { collapsed } = useStore();
-	const items = [
-		{
-			label: "工作台",
-			key: "/welcome",
-			icon: <DesktopOutlined rev={undefined} />,
-		},
-		{
-			label: "系统管理",
-			key: "2",
-			icon: <SettingOutlined rev={undefined} />,
-			children: [
-				{
-					label: "用户管理",
-					key: "/userList",
-					icon: <TeamOutlined rev={undefined} />,
-				},
-				{
-					label: '部门管理',
-					key: '/deptList',
-					icon: <TeamOutlined rev={undefined} />
-				},
-				{
-					label: '菜单管理',
-					key: '/menuList',
-					icon: <TeamOutlined rev={undefined} />
-				}
-			],
-		},
-	];
+	const data: any = useRouteLoaderData('layout')
+	const [selectedKeys, setSelectedKeys] = useState<string[]>([])
+	const [ menuList, setMenuList ]= useState<MenuItem[]>([])
+	type MenuItem = Required<MenuProps>['items'][number]
+	const { pathname } = useLocation()
+	function getItem(
+    label: React.ReactNode,
+    key?: React.Key | null,
+    icon?: React.ReactNode,
+		children?: MenuItem[],
+		type?: 'group',
+  ): MenuItem {
+    return {
+      label,
+      key,
+      icon,
+			children,
+			type
+    } as MenuItem
+  }
+  function createIcon(name?: string) {
+    if (!name) return <></>
+    const customerIcons: { [key: string]: any } = Icons
+    const icon = customerIcons[name]
+    if (!icon) return <></>
+    return React.createElement(icon)
+  }
+  // 递归生成菜单
+  const getTreeMenu = (menuList: IMenu.MenuItem[], treeList: MenuItem[] = []) => {
+    menuList.forEach((item, index) => {
+			if (item.menuType === 1 && item.children) {
+        if (item.buttons) return treeList.push(getItem(item.menuName, item.path || index, createIcon(item.icon)))
+        treeList.push(
+          getItem(item.menuName, item.path || index, createIcon(item.icon), getTreeMenu(item.children || []))
+        )
+			} else {
+				treeList.push(getItem(item.menuName, item.path || index, createIcon(item.icon)))
+			}
+    })
+    return treeList
+  }
+  // 初始化，获取接口菜单列表数据
+	useEffect(() => {
+		const treeMenuList = getTreeMenu(data.menuList)
+		setMenuList(treeMenuList)
+		setSelectedKeys([pathname])
+  }, [])
+
 	const style1 = {
 		opacity: 0,
 	};
@@ -48,9 +69,10 @@ const SideMenu = () => {
 	const handleClickLogo = () => {
 		navigate("/welcome");
 	};
-	const handleMenuItemClick = (e: any) => {
-		console.log("123", e);
-		navigate(e.key);
+	const handleMenuItemClick = ({ key }: { key: string }) => {
+		console.log(key)
+		setSelectedKeys([key])
+		navigate(key);
 	};
 	return (
 		<div>
@@ -61,14 +83,14 @@ const SideMenu = () => {
 				</div>
 			</div>
 			<Menu
-				defaultSelectedKeys={["/welcome"]}
 				mode="inline"
 				theme="dark"
-				items={items}
+				items={menuList}
 				style={{
 					width: collapsed ? "80px" : "auto",
 				}}
-				onClick={(e) => handleMenuItemClick(e)}
+				selectedKeys={selectedKeys}
+				onClick={handleMenuItemClick}
 			/>
 		</div>
 	);

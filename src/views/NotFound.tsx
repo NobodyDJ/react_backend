@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 function NotFound() {
 	const navigate = useNavigate();
 	const handleClick = () => {
-		navigate("/");
+		navigate("/welcome");
 	};
 	return (
 		<Result

@@ -13,6 +13,7 @@ import NoAccess from "@/views/NoAccess";
 import Layout from "../layout";
 import Dashboard from "@/views/dashboard";
 import Menu from "@/views/system/menu"
+import AuthLoader from './AuthLoader'
 
 // 以什么模式创建一个路由信息
 const router = createBrowserRouter([
@@ -26,7 +27,9 @@ const router = createBrowserRouter([
 		element: <Login></Login>,
 	},
 	{
+		id: 'layout',
 		element: <Layout></Layout>,
+		loader: AuthLoader,
 		children: [
 			{
 				path: "/welcome",
