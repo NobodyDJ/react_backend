@@ -14,6 +14,7 @@ import Layout from "../layout";
 import Dashboard from "@/views/dashboard";
 import Menu from "@/views/system/menu"
 import AuthLoader from './AuthLoader'
+import Role from '@/views/system/role'
 
 // 以什么模式创建一个路由信息
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
 			{
 				path: '/menuList',
 				element: <Menu/>
+			},
+			{
+				path: '/roleList',
+				element: <Role />
 			}
 		],
 	},
