@@ -7,6 +7,10 @@ import Menu from "@/components/Menu";
 import styles from "./index.module.less";
 import api from "@/api";
 import { useStore } from "@/store";
+import { router } from "@/router/index"
+import { IAuthLoader } from "@/router/AuthLoader"
+import { useLocation, useRouteLoaderData,Navigate } from "react-router-dom";
+import { searchRoute } from "@/utils/index"
 const { Content, Sider } = Layout;
 
 const App: React.FC = () => {
@@ -38,6 +42,7 @@ const App: React.FC = () => {
 	// 	observer.observe(targetNode, config)
 	// }, [])
 	const { collapsed, updateUserInfo } = useStore();
+	const { pathname } = useLocation()
 	const getUserInfo = async () => {
 		const data = await api.getUserInfo();
 		updateUserInfo(data);
@@ -45,6 +50,20 @@ const App: React.FC = () => {
 	useEffect(() => {
 		getUserInfo();
 	}, []);
+	// 路由重新加载，就会执行，重新获取路由数据
+	console.log(router);
+	const route: any = searchRoute(pathname, router)
+	console.log(route)
+  if (route && route.meta?.auth === false) {
+    // 继续执行
+  } else {
+    // 权限判断
+    const data = useRouteLoaderData('layout') as IAuthLoader
+    const staticPath = ['/welcome', '/403', '/404']
+    if (!data.menuPathList.includes(pathname) && !staticPath.includes(pathname)) {
+      return <Navigate to='/403' />
+    }
+  }
 	return (
 		<Watermark content="terrence">
 			<Layout>

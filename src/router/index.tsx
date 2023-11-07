@@ -17,7 +17,7 @@ import AuthLoader from './AuthLoader'
 import Role from '@/views/system/role'
 
 // 以什么模式创建一个路由信息
-const router = createBrowserRouter([
+export const router = [
 	// 根组件路由
 	{
 		path: "/",
@@ -50,7 +50,10 @@ const router = createBrowserRouter([
 			},
 			{
 				path: '/menuList',
-				element: <Menu/>
+				element: <Menu />,
+				meta: {
+					auth: false
+				}
 			},
 			{
 				path: '/roleList',
@@ -72,7 +75,7 @@ const router = createBrowserRouter([
 		path: "/403",
 		element: <NoAccess></NoAccess>,
 	},
-]);
+]
 
 // const router = [
 // 	// 根组件路由
@@ -107,4 +110,4 @@ const router = createBrowserRouter([
 // }
 
 // api路由形式，相对来说会更加灵活可以使用更复杂的loader或action
-export default router;
+export default createBrowserRouter(router);
