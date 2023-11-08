@@ -8,6 +8,7 @@ export const store = resso({
 	userInfo: {
 		userEmail: "",
 		userName: "",
+		role:0
 	},
 	updateUserInfo(userInfo: User.UserItem) {
 		store.userInfo = userInfo;

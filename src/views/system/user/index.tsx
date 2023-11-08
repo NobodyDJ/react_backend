@@ -6,6 +6,7 @@ import api from "@/api";
 import { formatDate } from "@/utils";
 import CreateUser from "./CreateUser";
 import { IAction } from "@/types/modal";
+import AuthButton from '@/components/AuthButton'
 export default function UserList() {
 	// 表单实例化
 	const { message,modal } = App.useApp();
@@ -211,9 +212,9 @@ export default function UserList() {
 				<div className="header-wrapper">
 					<div className="title">用户列表</div>
 					<div className="action">
-						<Button type="primary" onClick={handleCreate}>
-							新增
-						</Button>
+					  <AuthButton auth='user@create' type='primary' onClick={handleCreate}>
+              新增
+            </AuthButton>
 						<Button type="primary" danger onClick={handlePatchConfirm}>
 							批量删除
 						</Button>
