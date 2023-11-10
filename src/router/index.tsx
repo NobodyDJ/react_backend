@@ -15,6 +15,7 @@ import Dashboard from "@/views/dashboard";
 import Menu from "@/views/system/menu"
 import AuthLoader from './AuthLoader'
 import Role from '@/views/system/role'
+import OrderList from '@/views/order/OrderList'
 
 // 以什么模式创建一个路由信息
 export const router = [
@@ -58,6 +59,10 @@ export const router = [
 			{
 				path: '/roleList',
 				element: <Role />
+			},
+			{
+				path: '/orderList',
+				element: <OrderList />
 			}
 		],
 	},

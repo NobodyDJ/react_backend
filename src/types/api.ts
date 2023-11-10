@@ -3,7 +3,7 @@
  */
 // * 分页请求参数
 export interface PageParams {
-	pageNum: number | undefined;
+	pageNum?: number | undefined;
 	pageSize?: number | undefined;
 }
 // 返回结果，接口类型定义
@@ -183,10 +183,10 @@ export namespace OrderType {
 		id: number;
 		name: string;
 	}
-	export interface OrderSearchParams {
-		orderId: string;
-		userName: string;
-		state: number;
+	export interface OrderSearchParams extends PageParams {
+		orderId?: string;
+		userName?: string;
+		state?: number;
 	}
 	export interface OrderItem {
 		_id: string;
