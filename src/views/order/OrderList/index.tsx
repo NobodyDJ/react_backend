@@ -3,12 +3,16 @@ import { useAntdTable } from 'ahooks'
 import api from '@/api'
 import { ColumnsType } from 'antd/es/table'
 import { OrderType } from '@/types/api'
+import { useRef } from 'react'
+import CreateOrder from './components/CreateOrder'
+import { formatDate, formatMoney } from '@/utils'
 export default function OrderList() {
   const [form] = Form.useForm()
+  const orderRef = useRef<{ open: () => void }>()
   const getTableData = ({ current, pageSize }: { current: number; pageSize: number }, formData: OrderType.OrderSearchParams) => {
     return api
       .getOrderList({
-				...formData,
+        ...formData,
         pageNum: current,
         pageSize: pageSize
       })
@@ -22,7 +26,7 @@ export default function OrderList() {
 
   const { tableProps, search } = useAntdTable(getTableData, {
     form,
-    defaultParams: [{ current: 1, pageSize: 10 }, { state: 0 }]
+    defaultParams: [{ current: 1, pageSize: 10 }, { state: 1 }]
   })
 
   const columns: ColumnsType<OrderType.OrderItem> = [
@@ -34,27 +38,50 @@ export default function OrderList() {
     {
       title: '城市',
       dataIndex: 'cityName',
-      key: 'cityName'
+      key: 'cityName',
+      width: 80
     },
     {
       title: '下单地址',
       dataIndex: 'startAddress',
-      key: 'startAddress'
+      key: 'startAddress',
+      width: 160,
+      render(_, record) {
+        return (
+          <div>
+            <p>开始地址：{record.startAddress}</p>
+            <p>结束地址：{record.endAddress}</p>
+          </div>
+        )
+      }
     },
     {
       title: '下单时间',
       dataIndex: 'createTime',
-      key: 'createTime'
+      key: 'createTime',
+      width: 120,
+      render(createTime) {
+        return formatDate(createTime)
+      }
     },
     {
       title: '订单价格',
       dataIndex: 'orderAmount',
-      key: 'orderAmount'
+      key: 'orderAmount',
+      render(orderAmount) {
+        return formatMoney(orderAmount)
+      }
     },
     {
       title: '订单状态',
       dataIndex: 'state',
-      key: 'state'
+      key: 'state',
+      render(state) {
+        if (state === 1) return '进行中'
+        if (state === 2) return '已完成'
+        if (state === 3) return '超时'
+        if (state === 4) return '取消'
+      }
     },
     {
       title: '用户名称',
@@ -83,6 +110,11 @@ export default function OrderList() {
       }
     }
   ]
+
+  // 创建订单
+  const handleCreate = () => {
+    orderRef.current?.open()
+  }
   return (
     <div className='OrderList'>
       <Form className='search-form' form={form} layout='inline'>
@@ -115,11 +147,15 @@ export default function OrderList() {
         <div className='header-wrapper'>
           <div className='title'>用户列表</div>
           <div className='action'>
-            <Button type='primary'>新增</Button>
+            <Button type='primary' onClick={handleCreate}>
+              新增
+            </Button>
           </div>
         </div>
         <Table bordered rowKey='userId' columns={columns} {...tableProps} />
       </div>
+      {/* 创建订单组件 */}
+      <CreateOrder mRef={orderRef} update={search.submit} />
     </div>
   )
 }
