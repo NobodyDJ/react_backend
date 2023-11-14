@@ -153,6 +153,12 @@ export namespace MenuType {
 
 // 订单
 export namespace OrderType {
+	export enum IState {
+    doing = 1,
+    done = 2,
+    timeout = 3,
+    cance = 4
+  }
 	export interface LineData {
 		label: string[];
 		order: number[];
